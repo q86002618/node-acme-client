@@ -406,7 +406,7 @@ https://tools.ietf.org/html/rfc8555#section-7.4.2
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | order | <code>object</code> |  | Order object |
-| [preferredChain] | <code>string</code> | <code>null</code> | Indicate which certificate chain is preferred if a CA offers multiple, by exact issuer common name, default: `null` |
+| [preferredChain] | <code>Array.&lt;string&gt;</code> | <code></code> | Indicate which certificate chain is preferred if a CA offers multiple, by a array of exact issuer common name which represents certificate chain, default: `null` |
 
 **Example**  
 Get certificate
@@ -418,7 +418,7 @@ const certificate = await client.getCertificate(order);
 Get certificate with preferred chain
 ```js
 const order = { ... }; // Previously created order
-const certificate = await client.getCertificate(order, 'DST Root CA X3');
+const certificate = await client.getCertificate(order, ['DST Root CA X3']);
 ```
 <a name="AcmeClient+revokeCertificate"></a>
 
@@ -466,7 +466,7 @@ Auto mode
 | [opts.termsOfServiceAgreed] | <code>boolean</code> | Agree to Terms of Service, default: `false` |
 | [opts.skipChallengeVerification] | <code>boolean</code> | Skip internal challenge verification before notifying ACME provider, default: `false` |
 | [opts.challengePriority] | <code>Array.&lt;string&gt;</code> | Array defining challenge type priority, default: `['http-01', 'dns-01']` |
-| [opts.preferredChain] | <code>string</code> | Indicate which certificate chain is preferred if a CA offers multiple, by exact issuer common name, default: `null` |
+| [opts.preferredChain] | <code>Array.&lt;string&gt;</code> | Indicate which certificate chain is preferred if a CA offers multiple, by exact issuer common name, default: `null` |
 
 **Example**  
 Order a certificate using auto mode
@@ -498,7 +498,7 @@ const certificate = await client.auto({
     csr: certificateRequest,
     email: 'test@example.com',
     termsOfServiceAgreed: true,
-    preferredChain: 'DST Root CA X3',
+    preferredChain: ['DST Root CA X3'],
     challengeCreateFn: async () => {},
     challengeRemoveFn: async () => {}
 });
