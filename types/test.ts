@@ -48,13 +48,13 @@ import * as acme from 'acme-client';
 
     await client.finalizeOrder(order, certCsr);
     await client.getCertificate(order);
-    await client.getCertificate(order, 'DST Root CA X3');
+    await client.getCertificate(order, ['DST Root CA X3']);
 
     /* Auto */
     await client.auto({
         csr: certCsr,
-        challengeCreateFn: async (authz, challenge, keyAuthorization) => {},
-        challengeRemoveFn: async (authz, challenge, keyAuthorization) => {}
+        challengeCreateFn: async (authz, challenge, keyAuthorization) => { },
+        challengeRemoveFn: async (authz, challenge, keyAuthorization) => { }
     });
 
     await client.auto({
@@ -63,8 +63,8 @@ import * as acme from 'acme-client';
         termsOfServiceAgreed: false,
         skipChallengeVerification: false,
         challengePriority: ['http-01', 'dns-01'],
-        preferredChain: 'DST Root CA X3',
-        challengeCreateFn: async (authz, challenge, keyAuthorization) => {},
-        challengeRemoveFn: async (authz, challenge, keyAuthorization) => {}
+        preferredChain: ['DST Root CA X3'],
+        challengeCreateFn: async (authz, challenge, keyAuthorization) => { },
+        challengeRemoveFn: async (authz, challenge, keyAuthorization) => { }
     });
 })();

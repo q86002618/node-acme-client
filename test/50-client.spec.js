@@ -439,7 +439,7 @@ describe('client', () => {
         }
 
         await Promise.map(testIssuers, async (issuer) => {
-            const cert = await testClient.getCertificate(testOrder, issuer);
+            const cert = await testClient.getCertificate(testOrder, [issuer]);
             const rootCert = acme.forge.splitPemChain(cert).pop();
             const info = await acme.forge.readCertificateInfo(rootCert);
 

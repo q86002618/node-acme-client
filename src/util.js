@@ -137,6 +137,43 @@ async function findCertificateChainForIssuer(chains, issuer) {
     }
 }
 
+/**
+ * Find certificate chain with preferred issuers
+ * If issuers can not be located, the first certificate will be returned
+ *
+ * @param {array} certificates Array of PEM encoded certificate chains
+ * @param {string[]} issuers Preferred certificate issuer
+ * @returns {Promise<string>} PEM encoded certificate chain
+ */
+
+async function findCertificateChainForIssuers(chains, issuers) {
+    try {
+        return await Promise.any(chains.map(async (chain) => {
+            /* Look up all issuers */
+            const certs = forge.splitPemChain(chain);
+            const infoCollection = await Promise.map(certs, forge.readCertificateInfo);
+            const issuerCollection = infoCollection.map((i) => i.issuer.commonName).reverse();
+
+            /* Found match, return it */
+            const isContainIssuers = issuerCollection.every((issuer, i) => {
+                return issuer === issuers[i];
+            })
+            if (isContainIssuers) {
+                debug(`Found matching certificate for preferred issuers="[${issuers}]", issuers=${JSON.stringify(issuerCollection)}`);
+                return chain;
+            }
+
+            /* No match, throw error */
+            debug(`Unable to match certificate for preferred issuers="[${issuers}]", issuers=${JSON.stringify(issuerCollection)}`);
+            throw new Error('Certificate issuer mismatch');
+        }))
+    } catch (e) {
+        /* No certificates matched, return default */
+        debug(`Found no match in ${chains.length} certificate chains for preferred issuers="[${issuers}]", returning default certificate chain`);
+        return chains[0];
+    }
+}
+
 
 /**
  * Find and format error in response object
@@ -166,5 +203,6 @@ module.exports = {
     b64encode,
     parseLinkHeader,
     findCertificateChainForIssuer,
+    findCertificateChainForIssuers,
     formatResponseError
 };
